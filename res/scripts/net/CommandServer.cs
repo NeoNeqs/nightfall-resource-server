@@ -1,5 +1,6 @@
 using Godot;
 using Nightfall.ServerUtils.Net;
+using Nightfall.SharedUtils;
 using Nightfall.SharedUtils.InfoCodes;
 using Nightfall.SharedUtils.Net.Messaging;
 

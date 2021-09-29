@@ -2,6 +2,7 @@ using Godot;
 using Nightfall.Net.Messaging;
 using Nightfall.ServerUtils.Net;
 using Nightfall.ServerUtils.Profiling;
+using Nightfall.SharedUtils;
 using Nightfall.SharedUtils.InfoCodes;
 using Nightfall.SharedUtils.Logging;
 using Nightfall.SharedUtils.Net.Messaging;
