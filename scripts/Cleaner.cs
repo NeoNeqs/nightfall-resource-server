@@ -1,7 +1,8 @@
+using Nightfall.SharedUtils;
+
 namespace NightfallResourceServer.scripts
 {
-    public class Cleaner
+    public sealed partial class Cleaner : BasicCleaner
     {
-        
     }
 }

@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 [autoload]
 
 ResourceServer="*res://scripts/net/ResourceServer.cs"
+Cleaner="*res://scripts/Cleaner.cs"
 
 [display]
 
@@ -24,6 +25,10 @@ window/size/width=256
 window/size/height=144
 window/size/resizable=false
 window/vsync/vsync_mode=0
+
+[native_extensions]
+
+paths=["res://native/yaml.gdextension"]
 
 [rendering]
 

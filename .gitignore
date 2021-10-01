@@ -1,5 +1,5 @@
-res/.godot/
-res/.idea/
+.godot/
+.idea/
 
 
-res/*.import
+*.import
