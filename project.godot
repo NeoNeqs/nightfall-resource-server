@@ -1,0 +1,35 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+[application]
+
+config/name="Nightfall Resource Server"
+run/main_scene="res://scenes/main/main.tscn"
+config/icon="res://icon.png"
+
+[autoload]
+
+ResourceServer="*res://scripts/net/ResourceServer.cs"
+Cleaner="*res://scripts/Cleaner.cs"
+
+[display]
+
+window/size/width=256
+window/size/height=144
+window/size/resizable=false
+window/vsync/vsync_mode=0
+
+[native_extensions]
+
+paths=["res://native/yaml.gdextension"]
+
+[rendering]
+
+environment/defaults/default_environment="res://default_env.tres"
