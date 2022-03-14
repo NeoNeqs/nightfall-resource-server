@@ -1,4 +1,5 @@
 .idea/
-.godot/
 
-*.import
+**/obj/
+**/bin/
+**/tests/
