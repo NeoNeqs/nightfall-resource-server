@@ -19,4 +19,17 @@ public static class StringExtensions
 
         return true;
     }
+
+    public static bool IsValidFileName(this string s)
+    {
+        foreach (char c in s)
+        {
+            if (c is (< '0' or > '9') and (< 'a' or > 'z') and (< 'A' or > 'Z') and not '.')
+            {
+                return false;
+            }
+        }
+        
+        return true;
+    }
 }

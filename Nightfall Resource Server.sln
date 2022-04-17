@@ -10,8 +10,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Release|Any CPU.ActiveCfg = Debug|Any CPU
-		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60A1F81F-706B-41FD-9BF8-BA5E91313AED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(RiderSharedRunConfigurations) = postSolution
 		File = Publish.run.xml
