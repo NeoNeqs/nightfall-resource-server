@@ -11,6 +11,6 @@ RUN dotnet publish "Nightfall Resource Server.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
 WORKDIR /app
-EXPOSE 5000
+EXPOSE 5001
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Nightfall Resource Server.dll"]

@@ -1,11 +1,21 @@
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+using Microsoft.AspNetCore;
 
-builder.Services.AddControllers();
+namespace Nightfall.ResourceServer;
 
-WebApplication app = builder.Build();
+public static class Program
+{
+    public static void Main(string[] args)
+    {
+        CreateWebHostBuilder(args).Build().Run();
+    }
 
-app.Urls.Add("http://0.0.0.0:5000");
-
-app.MapControllers();
-
-app.Run();
+    private static IWebHostBuilder CreateWebHostBuilder(string[] args)
+    {
+        return WebHost.CreateDefaultBuilder(args).ConfigureLogging(logging =>
+        {
+            logging.ClearProviders();
+            logging.AddConsole();
+            logging.AddFile("logs/nf-{Date}.log");
+        }).UseStartup<Startup>();
+    }
+}
