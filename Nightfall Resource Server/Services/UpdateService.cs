@@ -2,21 +2,20 @@
 
 namespace Nightfall.ResourceServer;
 
-public class CacheService : IHostedService
+public class UpdateService : IHostedService
 {
     private static readonly Dictionary<string, Dictionary<string, string>> Updates = new();
 
     private static string _latestUpdateHash = null!;
-
     private readonly IHostApplicationLifetime _applicationLifetime;
+    private readonly ILogger<UpdateService> _logger;
 
-    private readonly ILogger<CacheService> _logger;
 #if DEBUG
     private readonly IWebHostEnvironment _env;
     private string Root => Path.Combine(_env.ContentRootPath, "tests");
 
-    public CacheService(IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime,
-        ILogger<CacheService> logger)
+    public UpdateService(IWebHostEnvironment env, IHostApplicationLifetime applicationLifetime,
+        ILogger<UpdateService> logger)
     {
         _env = env;
         _applicationLifetime = applicationLifetime;
@@ -37,8 +36,7 @@ public class CacheService : IHostedService
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     /// <summary>
-    /// Compares <paramref name="receivedChecksums"/> with <see cref="Updates"/> ('latest' key)
-    /// and finds files and patches to send
+    /// Compares <paramref name="receivedChecksums"/> with <see cref="Updates"/> ('latest' key) and decides which files and patches to send
     /// </summary>
     /// <param name="receivedChecksums"></param>
     /// <returns></returns>
@@ -75,26 +73,15 @@ public class CacheService : IHostedService
                 // Client doesn't have the file. Zip the whole file.
                 _ = ZipLatestFile(archiveStream, fileName);
             }
-
-            // Handle leftover entries 
-            foreach ((string fileName, _) in receivedChecksums)
-            {
-                if (fileName.StartsWith('*')) continue;
-                // File isn't present in the latest update. Put an empty entry to inform that this file should be deleted 
-                // empty .patch file means that there is nothing to patch (duh) which indicates that file should be deleted.
-                // It has to be a .patch file since any empty file could be used by application in some way
-                _ = archiveStream.CreateEntry($"{fileName}.patch");
-            }
         }
         else
         {
             // Update hash doesn't represent any known update.
             // This could mean several things:
             //      1. The update is missing on the server
-            //      2. One of the file sent by the client was modified thus the update hash is different (obsolete, read TODO below)
+            //      2. One of the file sent by the client was modified thus the update hash is different
             //      3. Malformed data
             // In that case zip all files from latest update
-            // TODO: Each update should have a file that contains the update hash so that it's not calculated by the client to avoid mismatch if files were modified by the client.
             foreach ((string fileName, string checksum) in Updates[_latestUpdateHash])
             {
                 // Client has a file but it could be not up to date.
@@ -111,16 +98,18 @@ public class CacheService : IHostedService
                 // Client doesn't have the file. Send the whole file.
                 _ = ZipLatestFile(archiveStream, fileName);
             }
-
-            // Handle leftover entries 
-            foreach ((string fileName, _) in receivedChecksums)
-            {
-                if (fileName.StartsWith('*')) continue;
-                // Those entries aren't present in the latest update and they should be deleted.
-                _ = archiveStream.CreateEntry($"{fileName}.patch");
-            }
         }
-
+        
+        // Handle leftover entries 
+        foreach ((string fileName, _) in receivedChecksums)
+        {
+            if (fileName.StartsWith('*')) continue;
+            // File isn't present in the latest update. Put an empty entry to inform that this file should be deleted 
+            // empty .patch file means that there is nothing to patch  which indicates that file should be deleted.
+            // It has to be a .patch file since any empty file could be used by application in some way
+            _ = archiveStream.CreateEntry($"{fileName}.patch");
+        }
+        
         return outputStream;
     }
 
@@ -128,7 +117,8 @@ public class CacheService : IHostedService
     {
         Updates.Clear();
 
-        EnumerationOptions options = new() {AttributesToSkip = FileAttributes.Hidden, ReturnSpecialDirectories = false};
+        EnumerationOptions options = new()
+            { AttributesToSkip = FileAttributes.Hidden, ReturnSpecialDirectories = false };
 
         IEnumerable<string> dirs;
         try
@@ -154,7 +144,9 @@ public class CacheService : IHostedService
             }
             catch
             {
-                _logger.LogWarning("The info file {infoFile} was not found or access was denied.", file);
+                _logger.LogWarning(
+                    "The info file '{infoFile}' was not found or access was denied. Update '{hash}' will be ignored.",
+                    file, dir);
                 continue;
             }
 
@@ -168,12 +160,12 @@ public class CacheService : IHostedService
         }
         catch
         {
-            _logger.LogCritical("The info file {infoFile} was not found or access was denied.", file);
+            _logger.LogCritical("The info file '{infoFile}' was not found or access was denied.", file);
             _applicationLifetime.StopApplication();
             return;
         }
 
-        var parsedInfoFile = ParseInfoFile(lines);
+        Dictionary<string, string> parsedInfoFile = ParseInfoFile(lines);
         if (!parsedInfoFile.ContainsKey("latest"))
         {
             _logger.LogCritical("The info file {infoFile} needs to have a mapping to the latest update.", file);
@@ -223,7 +215,7 @@ public class CacheService : IHostedService
             {
                 continue;
             }
-
+ 
             if (!split[0].IsValidFileName())
             {
                 continue;

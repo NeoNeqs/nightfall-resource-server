@@ -6,11 +6,11 @@ namespace Nightfall.ResourceServer;
 [Route("update/")]
 public class UpdateController : ControllerBase
 {
-    private readonly CacheService _cacheService;
+    private readonly UpdateService _updateService;
 
-    public UpdateController(CacheService cacheService)
+    public UpdateController(UpdateService updateService)
     {
-        _cacheService = cacheService;
+        _updateService = updateService;
     }
 
     [HttpPost]
@@ -25,7 +25,7 @@ public class UpdateController : ControllerBase
         MemoryStream result;
         try
         {
-            result = await Task.Run(() => _cacheService.FindDeltas(receivedChecksums));
+            result = await Task.Run(() => _updateService.FindDeltas(receivedChecksums));
         }
         catch
         {

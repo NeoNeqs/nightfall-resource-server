@@ -15,8 +15,8 @@ public class Startup
     {
         services.AddLogging();
 
-        services.AddTransient<CacheService>();
-        services.AddHostedService<CacheService>();
+        services.AddTransient<UpdateService>();
+        services.AddHostedService<UpdateService>();
         services.AddOptions();
         services.AddMemoryCache();
         services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
